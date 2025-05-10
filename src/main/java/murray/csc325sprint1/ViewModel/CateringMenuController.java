@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -40,6 +41,25 @@ public class CateringMenuController implements Initializable {
 
         // Load menu items
         loadMenuItems();
+
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (menuContainer.getScene() != null && menuContainer.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) menuContainer.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                menuContainer.getScene().getRoot().applyCss();
+                menuContainer.getScene().getRoot().layout();
+
+                double prefWidth = menuContainer.getScene().getRoot().prefWidth(-1);
+                double prefHeight = menuContainer.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     /**
@@ -177,9 +197,35 @@ public class CateringMenuController implements Initializable {
 
             javafx.scene.Scene scene = new javafx.scene.Scene(root);
             stage.setScene(scene);
+
+            // Ensure proper sizing after loading new scene
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double prefWidth = root.prefWidth(-1);
+                double prefHeight = root.prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            });
+
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+            showError("Navigation Error", "Could not return to menu: " + e.getMessage());
         }
+    }
+
+    /**
+     * Show an error alert dialog
+     */
+    private void showError(String title, String message) {
+        javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

@@ -1,5 +1,6 @@
 package murray.csc325sprint1.ViewModel;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,6 +31,25 @@ public class empContactController {
     private void initialize() {
         setupTableColumns();
         loadTickets();
+
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (requestsTable.getScene() != null && requestsTable.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) requestsTable.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                requestsTable.getScene().getRoot().applyCss();
+                requestsTable.getScene().getRoot().layout();
+
+                double prefWidth = requestsTable.getScene().getRoot().prefWidth(-1);
+                double prefHeight = requestsTable.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     private void setupTableColumns() {
@@ -73,17 +93,28 @@ public class empContactController {
             controller.initData(ticket);
 
             Stage replyStage = new Stage();
-            replyStage.setScene(new Scene(root));
-            replyStage.show();
+            Scene scene = new Scene(root);
+            replyStage.setScene(scene);
 
-            // No need to pass parent stage anymore
+            // Ensure proper sizing for the reply window
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double prefWidth = root.prefWidth(-1);
+                double prefHeight = root.prefHeight(-1);
+
+                // Add a bit of padding
+                replyStage.setWidth(prefWidth + 20);
+                replyStage.setHeight(prefHeight + 20);
+                replyStage.centerOnScreen();
+            });
+
+            replyStage.show();
         } catch (IOException e) {
             e.printStackTrace();
             showAlert("Error", "Failed to open reply window");
         }
     }
-
-
 
     private void loadTickets() {
         ObservableList<EmployeeSupport> tickets = FXCollections.observableArrayList(
@@ -119,5 +150,3 @@ public class empContactController {
         alert.showAndWait();
     }
 }
-
-

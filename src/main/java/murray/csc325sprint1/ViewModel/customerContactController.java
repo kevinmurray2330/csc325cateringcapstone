@@ -1,5 +1,6 @@
 package murray.csc325sprint1.ViewModel;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -26,16 +27,52 @@ public class customerContactController {
     private int currentTicketID = -1;
 
     @FXML
+    public void initialize() {
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (EnterMessage.getScene() != null && EnterMessage.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) EnterMessage.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                EnterMessage.getScene().getRoot().applyCss();
+                EnterMessage.getScene().getRoot().layout();
+
+                double prefWidth = EnterMessage.getScene().getRoot().prefWidth(-1);
+                double prefHeight = EnterMessage.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
+    }
+
+    @FXML
     private void handleGoBackButton() {
         try {
-
             Stage currentStage = (Stage) goBackButton.getScene().getWindow();
             currentStage.close();
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/murray/csc325sprint1/customer-main.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+
+            // Ensure proper sizing after loading
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double prefWidth = root.prefWidth(-1);
+                double prefHeight = root.prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            });
+
             stage.show();
 
         } catch (Exception e) {
@@ -81,7 +118,22 @@ public class customerContactController {
             controller.initData(firestore.getTicket(currentTicketID));
 
             Stage stage = new Stage();
-            stage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+
+            // Ensure proper sizing after loading
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double prefWidth = root.prefWidth(-1);
+                double prefHeight = root.prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            });
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

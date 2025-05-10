@@ -3,6 +3,7 @@ package murray.csc325sprint1.ViewModel;
 import java.net.URL;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -27,7 +28,24 @@ public class QuoteDetailsController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // No initialization needed for now
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (totalLabel.getScene() != null && totalLabel.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) totalLabel.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                totalLabel.getScene().getRoot().applyCss();
+                totalLabel.getScene().getRoot().layout();
+
+                double prefWidth = totalLabel.getScene().getRoot().prefWidth(-1);
+                double prefHeight = totalLabel.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     /**
@@ -40,6 +58,25 @@ public class QuoteDetailsController implements Initializable {
 
         // Update the UI with quote details
         updateQuoteDetails();
+
+        // Make sure dialog is properly sized after updating content
+        Platform.runLater(() -> {
+            if (totalLabel.getScene() != null && totalLabel.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) totalLabel.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                totalLabel.getScene().getRoot().applyCss();
+                totalLabel.getScene().getRoot().layout();
+
+                double prefWidth = totalLabel.getScene().getRoot().prefWidth(-1);
+                double prefHeight = totalLabel.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     /**

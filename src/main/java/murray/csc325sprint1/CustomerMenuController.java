@@ -1,5 +1,6 @@
 package murray.csc325sprint1;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,8 +13,8 @@ import javafx.stage.Stage;
 import murray.csc325sprint1.Model.User;
 import murray.csc325sprint1.Model.Util;
 import murray.csc325sprint1.Model.ViewPaths;
-
-import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -53,6 +54,17 @@ public class CustomerMenuController implements Initializable {
             welcomeLabel.setText("Welcome, " + currentUser.getfName() + "!");
         }
 
+        // Ensure proper window resizing after scene is fully loaded
+        Platform.runLater(() -> {
+            Stage stage = (Stage) cusMenu.getScene().getWindow();
+            double width = stage.getScene().getRoot().prefWidth(-1);
+            double height = stage.getScene().getRoot().prefHeight(-1);
+
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.centerOnScreen();
+        });
+
         // Initialize the Quote button click event
         cusQuote.setOnAction(event -> {
             try {
@@ -62,6 +74,9 @@ public class CustomerMenuController implements Initializable {
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
+
+                // Ensure proper sizing after loading
+                adjustStageSize(stage);
             } catch (IOException e) {
                 e.printStackTrace();
                 showError("Error loading quote view: " + e.getMessage());
@@ -84,26 +99,37 @@ public class CustomerMenuController implements Initializable {
                 Scene scene = new Scene(root);
                 stage.setScene(scene);
                 stage.show();
+
+                // Ensure proper sizing after loading
+                adjustStageSize(stage);
             } catch (IOException e) {
                 e.printStackTrace();
                 showError("Error loading order view: " + e.getMessage());
             }
         });
 
-        // Initialize log out functionality
+        // Initialize log out functionality - simply close the application
         cusLogOut.setOnAction(event -> {
             try {
-                // Clear current user
+                // Clear current user session
                 Util.setCurrentUser(null);
 
-                // Return to login screen
-                FXMLLoader loader = new FXMLLoader(getClass().getResource(ViewPaths.INIT_SCREEN));
-                Parent root = loader.load();
-                Stage stage = (Stage) cusLogOut.getScene().getWindow();
-                Scene scene = new Scene(root);
-                stage.setScene(scene);
-                stage.show();
-            } catch (IOException e) {
+                // Get the current stage
+                Stage currentStage = (Stage) cusLogOut.getScene().getWindow();
+
+                // Show confirmation dialog
+                Alert confirmExit = new Alert(Alert.AlertType.CONFIRMATION);
+                confirmExit.setTitle("Log Out");
+                confirmExit.setHeaderText("Log Out");
+                confirmExit.setContentText("Are you sure you want to log out and exit the application?");
+
+                if (confirmExit.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
+                    // Close the application
+                    currentStage.close();
+                    // Optionally force exit the application
+                    // Platform.exit();
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
                 showError("Error logging out: " + e.getMessage());
             }
@@ -124,6 +150,9 @@ public class CustomerMenuController implements Initializable {
                 stage.setScene(scene);
                 stage.setTitle("Customer Support");
                 stage.show();
+
+                // Ensure proper sizing after loading
+                adjustStageSize(stage);
             } catch (IOException e) {
                 e.printStackTrace();
                 showError("Error loading customer contact screen: " + e.getMessage());
@@ -151,6 +180,9 @@ public class CustomerMenuController implements Initializable {
             Scene scene = new Scene(root);
             stage.setScene(scene);
             stage.show();
+
+            // Ensure proper sizing after loading
+            adjustStageSize(stage);
         } catch (IOException e) {
             System.err.println("Failed to load catering menu view");
             e.printStackTrace();
@@ -172,10 +204,29 @@ public class CustomerMenuController implements Initializable {
             Stage stage = (Stage) cusOrderHistory.getScene().getWindow();
             stage.setScene(scene);
             stage.show();
+
+            // Ensure proper sizing after loading
+            adjustStageSize(stage);
         } catch (IOException e) {
             e.printStackTrace();
             showError("Failed to load order history: " + e.getMessage());
         }
+    }
+
+    /**
+     * Adjust stage size to fit content
+     */
+    private void adjustStageSize(Stage stage) {
+        Platform.runLater(() -> {
+            Parent root = stage.getScene().getRoot();
+            double width = root.prefWidth(-1);
+            double height = root.prefHeight(-1);
+
+            // Add a bit of padding to prevent scrollbars
+            stage.setWidth(width + 20);
+            stage.setHeight(height + 20);
+            stage.centerOnScreen();
+        });
     }
 
     /**

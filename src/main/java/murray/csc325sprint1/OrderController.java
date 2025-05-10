@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -57,6 +58,16 @@ public class OrderController implements Initializable {
             homeBtn.setOnAction(event -> handleHomeButtonClick());
         }
 
+        // Ensure proper window resizing after scene is fully loaded
+        Platform.runLater(() -> {
+            Stage stage = (Stage) menuContainer.getScene().getWindow();
+            double width = stage.getScene().getRoot().prefWidth(-1);
+            double height = stage.getScene().getRoot().prefHeight(-1);
+
+            stage.setWidth(width);
+            stage.setHeight(height);
+            stage.centerOnScreen();
+        });
     }
 
     /**
@@ -243,7 +254,19 @@ public class OrderController implements Initializable {
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initStyle(StageStyle.UNDECORATED);
-            dialogStage.setScene(new Scene(root));
+
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+            // Adjust the dialog stage size to properly fit content
+            root.applyCss();
+            root.layout();
+            double dialogWidth = root.prefWidth(-1) + 20;
+            double dialogHeight = root.prefHeight(-1) + 20;
+            dialogStage.setWidth(dialogWidth);
+            dialogStage.setHeight(dialogHeight);
+            dialogStage.centerOnScreen();
+
             dialogStage.showAndWait();
 
             // Check if order was placed successfully
@@ -296,6 +319,19 @@ public class OrderController implements Initializable {
             Scene scene = new Scene(root);
             Stage stage = (Stage) cartBtn.getScene().getWindow();
             stage.setScene(scene);
+
+            // Ensure proper sizing after loading
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double width = root.prefWidth(-1) + 20;
+                double height = root.prefHeight(-1) + 20;
+
+                stage.setWidth(width);
+                stage.setHeight(height);
+                stage.centerOnScreen();
+            });
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();

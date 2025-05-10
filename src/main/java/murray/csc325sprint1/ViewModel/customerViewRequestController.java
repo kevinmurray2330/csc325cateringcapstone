@@ -1,5 +1,6 @@
 package murray.csc325sprint1.ViewModel;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -25,6 +26,25 @@ public class customerViewRequestController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         firestore = SupportFirestoreFunctions.getInstance();
         TicketIDListener();
+
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (backButton.getScene() != null && backButton.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) backButton.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                backButton.getScene().getRoot().applyCss();
+                backButton.getScene().getRoot().layout();
+
+                double prefWidth = backButton.getScene().getRoot().prefWidth(-1);
+                double prefHeight = backButton.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     private void TicketIDListener() {
@@ -73,6 +93,9 @@ public class customerViewRequestController implements Initializable {
     public void initData(EmployeeSupport ticket) {
         if(ticket != null) {
             populateFields(ticket);
+            if (TicketIDTA != null) {
+                TicketIDTA.setText(String.valueOf(ticket.getTicketID()));
+            }
         }
     }
 

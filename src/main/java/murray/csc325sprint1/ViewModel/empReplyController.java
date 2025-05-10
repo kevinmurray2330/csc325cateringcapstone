@@ -1,5 +1,6 @@
 package murray.csc325sprint1.ViewModel;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -20,6 +21,28 @@ public class empReplyController {
     private EmployeeSupport currentTicket;
     private Stage parentStage;
     private final SupportFirestoreFunctions firestore = SupportFirestoreFunctions.getInstance();
+
+    @FXML
+    public void initialize() {
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (backButton.getScene() != null && backButton.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) backButton.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                backButton.getScene().getRoot().applyCss();
+                backButton.getScene().getRoot().layout();
+
+                double prefWidth = backButton.getScene().getRoot().prefWidth(-1);
+                double prefHeight = backButton.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
+    }
 
     public void setParentStage(Stage parentStage) {
         this.parentStage = parentStage;
@@ -76,5 +99,3 @@ public class empReplyController {
         alert.showAndWait();
     }
 }
-
-

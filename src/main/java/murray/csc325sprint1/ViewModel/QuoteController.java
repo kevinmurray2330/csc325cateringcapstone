@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -55,6 +56,25 @@ public class QuoteController implements Initializable {
         if (homeBtn != null) {
             homeBtn.setOnAction(event -> navigateToCustomerMenu(event));
         }
+
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (menuContainer.getScene() != null && menuContainer.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) menuContainer.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                menuContainer.getScene().getRoot().applyCss();
+                menuContainer.getScene().getRoot().layout();
+
+                double prefWidth = menuContainer.getScene().getRoot().prefWidth(-1);
+                double prefHeight = menuContainer.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     /**
@@ -67,6 +87,20 @@ public class QuoteController implements Initializable {
             Stage stage = (Stage) homeBtn.getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
+
+            // Ensure proper sizing for customer menu screen
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double prefWidth = root.prefWidth(-1);
+                double prefHeight = root.prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            });
+
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
@@ -265,7 +299,22 @@ public class QuoteController implements Initializable {
             Stage dialogStage = new Stage();
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initStyle(StageStyle.UNDECORATED);
-            dialogStage.setScene(new Scene(root));
+            Scene scene = new Scene(root);
+            dialogStage.setScene(scene);
+
+            // Ensure proper sizing for dialog
+            Platform.runLater(() -> {
+                root.applyCss();
+                root.layout();
+                double prefWidth = root.prefWidth(-1);
+                double prefHeight = root.prefHeight(-1);
+
+                // Add a bit of padding
+                dialogStage.setWidth(prefWidth + 20);
+                dialogStage.setHeight(prefHeight + 20);
+                dialogStage.centerOnScreen();
+            });
+
             dialogStage.showAndWait();
 
         } catch (IOException e) {

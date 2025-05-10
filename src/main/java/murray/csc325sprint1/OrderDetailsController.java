@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -89,6 +90,14 @@ public class OrderDetailsController implements Initializable {
         // Set styles for other elements
         totalLabel.getStyleClass().add("total-label");
         placeOrderButton.getStyleClass().add("place-order-button");
+
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (totalLabel.getScene() != null && totalLabel.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) totalLabel.getScene().getWindow();
+                stage.sizeToScene();
+            }
+        });
     }
 
     /**
@@ -187,6 +196,25 @@ public class OrderDetailsController implements Initializable {
 
         // Update availability info for the default date/time
         updateAvailabilityInfo();
+
+        // Ensure the dialog size adjusts to fit content
+        Platform.runLater(() -> {
+            if (totalLabel.getScene() != null && totalLabel.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) totalLabel.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                totalLabel.getScene().getRoot().applyCss();
+                totalLabel.getScene().getRoot().layout();
+
+                double prefWidth = totalLabel.getScene().getRoot().prefWidth(-1);
+                double prefHeight = totalLabel.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     /**

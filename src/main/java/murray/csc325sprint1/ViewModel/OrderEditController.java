@@ -4,6 +4,7 @@ import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.QueryDocumentSnapshot;
 import com.google.cloud.firestore.QuerySnapshot;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -84,6 +85,25 @@ public class OrderEditController {
         // Add event listeners to the date picker and time combo box
         datePicker.valueProperty().addListener((obs, oldVal, newVal) -> handleDateTimeChange());
         timeComboBox.valueProperty().addListener((obs, oldVal, newVal) -> handleDateTimeChange());
+
+        // Ensure proper window sizing after UI is fully loaded
+        Platform.runLater(() -> {
+            if (closeButton.getScene() != null && closeButton.getScene().getWindow() instanceof Stage) {
+                Stage stage = (Stage) closeButton.getScene().getWindow();
+
+                // Force layout pass to calculate proper size
+                closeButton.getScene().getRoot().applyCss();
+                closeButton.getScene().getRoot().layout();
+
+                double prefWidth = closeButton.getScene().getRoot().prefWidth(-1);
+                double prefHeight = closeButton.getScene().getRoot().prefHeight(-1);
+
+                // Add a bit of padding
+                stage.setWidth(prefWidth + 20);
+                stage.setHeight(prefHeight + 20);
+                stage.centerOnScreen();
+            }
+        });
     }
 
     /**
@@ -144,6 +164,23 @@ public class OrderEditController {
 
                 // Update availability info
                 updateAvailabilityInfo();
+
+                // Ensure dialog has proper size after everything is loaded
+                Platform.runLater(() -> {
+                    Stage stage = (Stage) orderIdLabel.getScene().getWindow();
+
+                    // Force layout pass to calculate proper size
+                    orderIdLabel.getScene().getRoot().applyCss();
+                    orderIdLabel.getScene().getRoot().layout();
+
+                    double prefWidth = orderIdLabel.getScene().getRoot().prefWidth(-1);
+                    double prefHeight = orderIdLabel.getScene().getRoot().prefHeight(-1);
+
+                    // Add a bit of padding
+                    stage.setWidth(prefWidth + 20);
+                    stage.setHeight(prefHeight + 20);
+                    stage.centerOnScreen();
+                });
             }
 
         } catch (Exception e) {

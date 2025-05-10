@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="murray.csc325sprint1.ViewModel.OrderListController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="murray.csc325sprint1.ViewModel.OrderListController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
             <children>
@@ -67,11 +67,12 @@
                 </HBox>
                 <TableView fx:id="ordersTableView" prefHeight="350.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="orderIdColumn" prefWidth="120.0" text="Order ID" />
-                        <TableColumn fx:id="pickupDateColumn" prefWidth="150.0" text="Pickup Date" />
-                        <TableColumn fx:id="pickupTimeColumn" prefWidth="140.0" text="Pickup Time" />
-                        <TableColumn fx:id="totalColumn" prefWidth="120.0" text="Total" />
-                        <TableColumn fx:id="statusColumn" prefWidth="120.0" text="Status" />
+                        <TableColumn fx:id="orderIdColumn" prefWidth="80.0" text="Order ID" />
+                        <TableColumn fx:id="pickupDateColumn" prefWidth="100.0" text="Pickup Date" />
+                        <TableColumn fx:id="pickupTimeColumn" prefWidth="90.0" text="Pickup Time" />
+                        <TableColumn fx:id="totalColumn" prefWidth="80.0" text="Total" />
+                        <TableColumn fx:id="itemsColumn" prefWidth="280.0" text="Order Items" />
+                        <TableColumn fx:id="statusColumn" prefWidth="80.0" text="Status" />
                         <TableColumn fx:id="actionsColumn" prefWidth="130.0" text="Actions" />
                     </columns>
                     <VBox.margin>
